@@ -1,0 +1,31 @@
+# 每日市场报告配置文件
+# 安装后会自动生成到 ~/.hermes/scripts/market_report_config.yaml
+
+# 监控的股票列表（雅虎财经代码）
+stocks:
+  - AMD    # 超威半导体
+  - NVDA   # 英伟达
+  - TSM    # 台积电
+  - AAPL   # 苹果
+  - GOOGL  # 谷歌
+
+# 监控的加密货币列表（CoinGecko ID）
+cryptos:
+  - bitcoin
+  - ethereum
+  - solana
+
+# 接收邮件的邮箱地址
+recipient_email: "your_email@example.com"
+
+# Maton API Key（用于发送邮件）
+# 获取方式：https://maton.ai/
+maton_api_key: ""
+
+# Cron 调度表达式
+# 格式：分 时 日 月 周
+# 示例：
+#   "0 1 * * *"  - 每天 UTC 1:00（北京时间 9:00）
+#   "0 9 * * 1"  - 每周一 UTC 9:00
+#   "30 8 * * 1-5" - 工作日 8:30 UTC
+schedule: "0 1 * * *"
