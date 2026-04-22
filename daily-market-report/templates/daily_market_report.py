@@ -14,14 +14,48 @@ from email.mime.text import MIMEText
 from datetime import datetime
 
 # ==================== 配置 ====================
-RECIPIENT_EMAIL = "916505542@qq.com"
-MATON_API_KEY = os.environ.get("MATON_API_KEY")
-CRYPTO_SKILL_PATH = "/root/.hermes/hermes-agent/skills/crypto-market-data"
+CONFIG_PATH = os.path.expanduser("~/.hermes/scripts/market_report_config.yaml")
+CRYPTO_SKILL_PATH = "/Users/ezio/skills/crypto-market-data"
 
-# 股票列表
-STOCKS = ["NVDA", "TSM", "AMD", "AAPL", "GOOGL"]
-# 加密货币列表
-CRYPTOS = ["bitcoin", "ethereum", "solana"]
+def load_config():
+    """从 YAML 配置文件加载配置（不依赖第三方库）"""
+    config = {
+        "stocks": ["NVDA", "TSM", "AMD", "AAPL", "GOOGL"],
+        "cryptos": ["bitcoin", "ethereum", "solana"],
+        "recipient_email": "916505542@qq.com",
+        "maton_api_key": "",
+        "schedule": "0 1 * * *",
+    }
+    if not os.path.exists(CONFIG_PATH):
+        return config
+    with open(CONFIG_PATH, 'r') as f:
+        lines = f.readlines()
+    current_key = None
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith('#'):
+            continue
+        if stripped.startswith('- '):
+            if current_key in ('stocks', 'cryptos'):
+                config[current_key].append(stripped[2:].strip())
+        elif ':' in stripped:
+            key, _, val = stripped.partition(':')
+            key = key.strip()
+            val = val.strip().strip('"').strip("'")
+            if key in ('stocks', 'cryptos'):
+                config[key] = []
+                current_key = key
+            else:
+                current_key = None
+                if val:
+                    config[key] = val
+    return config
+
+_cfg = load_config()
+RECIPIENT_EMAIL = _cfg["recipient_email"]
+MATON_API_KEY = os.environ.get("MATON_API_KEY") or _cfg.get("maton_api_key", "")
+STOCKS = _cfg["stocks"]
+CRYPTOS = _cfg["cryptos"]
 
 # ==================== 工具函数 ====================
 def log(message):
@@ -182,7 +216,9 @@ def generate_investment_advice(symbol, data, technical, volume, year_perf):
         'TSM': {'name': '台积电', 'sector': '晶圆代工', 'advantage': '3nm/5nm先进制程独占', 'weight': '30%'},
         'AMD': {'name': 'AMD', 'sector': 'CPU/GPU', 'advantage': '性价比、MI300获认可', 'weight': '20%'},
         'AAPL': {'name': '苹果', 'sector': '消费电子', 'advantage': '生态护城河、iPhone现金流', 'weight': '40%'},
-        'GOOGL': {'name': 'Google', 'sector': '搜索与云', 'advantage': 'AI搜索、云计算领先', 'weight': '30%'}
+        'GOOGL': {'name': 'Google', 'sector': '搜索与云', 'advantage': 'AI搜索、云计算领先', 'weight': '30%'},
+        'QQQ': {'name': '纳斯达克100 ETF', 'sector': '科技指数基金', 'advantage': '分散持有100家纳斯达克科技龙头，低费率', 'weight': '30%'},
+        'TTWO': {'name': 'Take-Two Interactive', 'sector': '游戏', 'advantage': 'GTA/NBA 2K/Borderlands 顶级IP，GTA6 催化剂', 'weight': '20%'},
     }
     
     info = symbol_desc.get(symbol, {'name': symbol, 'sector': '科技', 'advantage': '技术领先', 'weight': '20%'})
@@ -547,10 +583,26 @@ def main():
 
     log("✅ HTML 邮件生成完成")
 
-    # 步骤 5: 发送邮件
-    log("步骤 5: 发送邮件...")
+    # 步骤 5: 发送邮件或保存本地
+    log("步骤 5: 输出报告...")
     subject = f"市场数据报告（详细版） - {datetime.now().strftime('%Y-%m-%d')}"
-    success = send_email(subject, html_content, md_report_str, f"market_report_detailed_{datetime.now().strftime('%Y%m%d')}.md")
+
+    if MATON_API_KEY:
+        success = send_email(subject, html_content, md_report_str, f"market_report_detailed_{datetime.now().strftime('%Y%m%d')}.md")
+    else:
+        # 保存到本地文件
+        report_dir = os.path.expanduser("~/.hermes/reports")
+        os.makedirs(report_dir, exist_ok=True)
+        date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+        md_path = os.path.join(report_dir, f"market_report_{date_str}.md")
+        html_path = os.path.join(report_dir, f"market_report_{date_str}.html")
+        with open(md_path, 'w', encoding='utf-8') as f:
+            f.write(md_report_str)
+        with open(html_path, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+        log(f"📄 Markdown 报告已保存: {md_path}")
+        log(f"🌐 HTML 报告已保存: {html_path}")
+        success = True
 
     if success:
         log("=" * 80)
