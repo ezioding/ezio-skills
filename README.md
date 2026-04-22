@@ -12,17 +12,13 @@
 
 **安装：**
 ```bash
-# Claude Code
-cp -r skills/daily-market-report ~/.claude/skills/
-
-# Hermes
-cp -r skills/daily-market-report ~/.hermes/skills/
+cd ~/ezio-skills
+./install.sh daily-market-report
 ```
 
 **使用：**
 ```bash
-cd ~/.hermes/skills/daily-market-report
-./install.sh
+/daily-market-report
 ```
 
 **前提条件：**
@@ -38,11 +34,13 @@ cd ~/.hermes/skills/daily-market-report
 
 **安装：**
 ```bash
-# Claude Code
-cp -r skills/analyze-stock ~/.claude/skills/
+cd ~/ezio-skills
+./install.sh analyze-stock
+```
 
-# Hermes
-cp -r skills/analyze-stock ~/.hermes/skills/
+**使用：**
+```bash
+/analyze-stock
 ```
 
 **触发示例：**
@@ -65,6 +63,7 @@ analyze 0700.HK
 
 ```
 ezio-skills/
+├── install.sh                 # 统一安装脚本
 ├── skills/                    # 所有 skills
 │   ├── daily-market-report/   # 市场报告 skill
 │   │   ├── SKILL.md
@@ -84,7 +83,8 @@ ezio-skills/
 1. 在 `skills/` 目录下创建新目录
 2. 添加 `SKILL.md` 文件（Hermes 技能格式）
 3. 更新根目录的 `README.md`
-4. 提交并推送到 GitHub
+4. 更新 `install.sh` 脚本以支持新 skill
+5. 提交并推送到 GitHub
 
 ---
 
