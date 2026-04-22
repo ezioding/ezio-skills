@@ -8,35 +8,27 @@
 
 ### 📊 daily-market-report
 
-自动化每日市场数据报告生成和发送工作流。
+自动化每日市场数据报告生成和发送工作流。自动获取股票和加密货币实时数据，生成技术面分析报告并通过邮件发送。
 
-**功能特性：**
-- 📊 自动获取股票和加密货币实时数据
-- 📈 技术面分析（50/200日均线、成交量、年内表现）
-- 💡 生成投资建议和决策简报
-- 📧 自动发送邮件到指定邮箱
-- ⏰ Cron job 定时执行
-
-**快速开始：**
+**安装：**
 ```bash
-cd skills/daily-market-report
+# Claude Code
+cp -r skills/daily-market-report ~/.claude/skills/
+
+# Hermes
+cp -r skills/daily-market-report ~/.hermes/skills/
+```
+
+**使用：**
+```bash
+cd ~/.hermes/skills/daily-market-report
 ./install.sh
 ```
 
-**监控标的：**
-- 股票：AMD, NVDA, TSM, AAPL, GOOGL（可自定义）
-- 加密货币：Bitcoin, Ethereum, Solana（可自定义）
-
-**依赖：**
+**前提条件：**
 - Node.js (>= 14.x)
 - crypto-market-data skill
 - Maton API Key（可选，用于邮件发送）
-
-**详细文档：**
-- [安装指南](skills/daily-market-report/references/installation.md)
-- [配置说明](skills/daily-market-report/references/configuration.md)
-- [使用指南](skills/daily-market-report/references/usage.md)
-- [故障排除](skills/daily-market-report/references/troubleshooting.md)
 
 ---
 
@@ -44,78 +36,26 @@ cd skills/daily-market-report
 
 分析股票并给出交易决策（买入/卖出/持有）。基于 [TradingAgents](https://github.com/TauricResearch/TradingAgents) 多智能体框架。
 
-**触发方式：**
+**安装：**
 ```bash
-帮我分析 NVDA
-analyze AAPL 2026-04-22
-分析一下 0700.HK
-```
+# Claude Code
+cp -r skills/analyze-stock ~/.claude/skills/
 
-**支持股票：**
-- 美股（NVDA、AAPL 等）
-- 港股（0700.HK 格式）
-- A 股（需 yfinance 支持）
-
-**首次使用**会自动完成 TradingAgents 安装和配置，只需提供：
-- LLM provider（OpenAI / Anthropic / DeepSeek / 其他中转）
-- API Key
-
-**前提条件：** 已安装 `git` 和 `uv`
-
----
-
-## 🚀 安装
-
-### 安装单个 Skill
-
-将需要的 skill 目录复制到 `~/.hermes/skills/`：
-
-```bash
-# 安装 daily-market-report
-cp -r skills/daily-market-report ~/.hermes/skills/
-
-# 安装 analyze-stock
+# Hermes
 cp -r skills/analyze-stock ~/.hermes/skills/
 ```
 
-### 使用 SkillHub 安装（推荐）
-
-如果 skill 已发布到 SkillHub：
-
-```bash
-skillhub install daily-market-report
-skillhub install analyze-stock
+**触发示例：**
+```
+帮我分析 NVDA
+分析 AAPL
+analyze 0700.HK
 ```
 
----
-
-## 📖 使用方法
-
-### daily-market-report
-
-```bash
-cd ~/.hermes/skills/daily-market-report
-
-# 交互式安装
-./install.sh
-
-# 运行测试
-./test.sh
-
-# 手动执行
-python3 ~/.hermes/scripts/daily_market_report.py
-
-# 卸载
-./uninstall.sh
-```
-
-### analyze-stock
-
-安装后在 Hermes 中直接使用：
-
-```
-帮我分析 NVDA 股票
-```
+**前提条件：**
+- 已安装 `git` 和 `uv`
+- LLM provider（OpenAI / Anthropic / DeepSeek / 其他中转）
+- API Key
 
 ---
 
