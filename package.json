@@ -1,0 +1,9 @@
+{
+  "name": "ezio-skills",
+  "version": "1.0.0",
+  "description": "Personal Claude Code skills collection",
+  "license": "MIT",
+  "bin": {
+    "ezio-skills": "bin/install.js"
+  }
+}
